@@ -1,4 +1,6 @@
 from flask import Flask, redirect, url_for, request, render_template, make_response, flash
+from werkzeug.utils import secure_filename
+
 app = Flask(__name__)
 app.secret_key="my-secret-key-flask"
 
@@ -84,5 +86,16 @@ def flash_msg():
   flash('second flash!')
   return redirect('/')
 
+@app.route('/fileupload')
+def file_upload():
+  return render_template('upload_file.html')
+
+@app.route('/uploader', methods=['POST','GET'])
+def uploader():
+  if request.method == 'POST':
+    f = request.files['file']
+    f.save(secure_filename(f.filename))
+    return 'file uploaded successfully!!..'
+  
 if __name__ == '__main__':
   app.run(debug=True)
