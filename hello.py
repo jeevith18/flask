@@ -1,5 +1,6 @@
-from flask import Flask, redirect, url_for, request, render_template, make_response
+from flask import Flask, redirect, url_for, request, render_template, make_response, flash
 app = Flask(__name__)
+app.secret_key="my-secret-key-flask"
 
 @app.route('/test_jinja/<name>')
 def test_jinja_template(name):
@@ -57,10 +58,7 @@ def result():
 @app.route('/')
 def welcome():
   username = request.cookies.get('username')
-  if username:
-    return render_template('home.html',username=username)
-  else:
-    return render_template('home.html')
+  return render_template('home.html', username=username)
   
 @app.route('/setname',methods=['POST','GET'])
 def set_cookie():
@@ -69,6 +67,7 @@ def set_cookie():
     if username:
       resp = make_response(redirect("/"))
       resp.set_cookie("username", username, max_age=60*60*24)
+      flash(f'{username} successfully logged in...')
       return resp
   return render_template('login.html')
 
@@ -76,7 +75,14 @@ def set_cookie():
 def logout():
   resp = make_response(redirect('/'))
   resp.set_cookie('username', '', expires=0)
+  flash("User successfully loggedout...")
   return resp
+
+@app.route('/flash')
+def flash_msg():
+  flash('This is a custom flash message for the user!')
+  flash('second flash!')
+  return redirect('/')
 
 if __name__ == '__main__':
   app.run(debug=True)
