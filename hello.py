@@ -1,10 +1,5 @@
-from flask import Flask, redirect, url_for, request, render_template
+from flask import Flask, redirect, url_for, request, render_template, make_response
 app = Flask(__name__)
-
-# using the render template
-@app.route('/')
-def hello():
-  return render_template('home.html')
 
 @app.route('/test_jinja/<name>')
 def test_jinja_template(name):
@@ -58,5 +53,30 @@ def result():
       result = request.form
       return render_template("result.html",result = result)  
     
+# set a / route to check cookie
+@app.route('/')
+def welcome():
+  username = request.cookies.get('username')
+  if username:
+    return render_template('home.html',username=username)
+  else:
+    return render_template('home.html')
+  
+@app.route('/setname',methods=['POST','GET'])
+def set_cookie():
+  if request.method == 'POST':
+    username = request.form.get('username')
+    if username:
+      resp = make_response(redirect("/"))
+      resp.set_cookie("username", username, max_age=60*60*24)
+      return resp
+  return render_template('login.html')
+
+@app.route('/logout',methods=['POST','GET'])
+def logout():
+  resp = make_response(redirect('/'))
+  resp.set_cookie('username', '', expires=0)
+  return resp
+
 if __name__ == '__main__':
   app.run(debug=True)

@@ -4,8 +4,16 @@
 
 {% block content %}
 <div class="content-header">
-    <h1><i class="fa fa-home"></i> Welcome Home</h1>
-    <p class="lead">Discover the power of Flask web development</p>
+        {% if username %}
+            <h1><i class="fa fa-home"></i> Welcome Home, {{ username }}</h1>
+            <form method="POST" action="{{ url_for('logout') }}">
+            <button type="submit" class="btn btn-danger mt-3">Logout</button>
+            </form>
+        {% else %}
+            <h1><i class="fa fa-home"></i> Welcome Home, Guest </h1>
+            <p class="lead">Discover the power of Flask web development</p>
+            <a class="btn btn-primary mt-3" href="/setname">Login</a>
+        {% endif %}
 </div>
 
 <div class="content-body">
