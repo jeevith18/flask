@@ -1,6 +1,7 @@
 from flask import Flask, redirect, url_for, request, render_template, make_response, flash
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
+from contactform import ContactForm
 
 app = Flask(__name__)
 app.secret_key="my-secret-key-flask"
@@ -115,6 +116,18 @@ def flask_mail():
   msg.body = 'Hello Flask message sent from Flask-Mail'
   mail.send(msg)
   return "Mail Sent"
-  
+
+# Create a flask specific form and use them in /form endpoint
+@app.route('/contact',methods=['GET','POST'])
+def flask_form():
+  form = ContactForm()
+  if request.method == 'POST':
+    if form.validate()==False:
+      return render_template('contact.html',form=form)
+    else:
+      return render_template('form_success.html')
+  elif request.method == 'GET':
+    return render_template('contact.html', form = form)
+
 if __name__ == '__main__':
   app.run(debug=True)
