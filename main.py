@@ -1,8 +1,16 @@
 from flask import Flask, redirect, url_for, request, render_template, make_response, flash
+from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 app.secret_key="my-secret-key-flask"
+app.config['MAIL_SERVER']='smtp.yopmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'yourId@yopmail.com'
+app.config['MAIL_PASSWORD'] = 'password'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+mail=Mail(app)
 
 @app.route('/test_jinja/<name>')
 def test_jinja_template(name):
@@ -80,12 +88,14 @@ def logout():
   flash("User successfully loggedout...")
   return resp
 
+# flash message  in the page 
 @app.route('/flash')
 def flash_msg():
   flash('This is a custom flash message for the user!')
   flash('second flash!')
   return redirect('/')
 
+# file uploader
 @app.route('/fileupload')
 def file_upload():
   return render_template('upload_file.html')
@@ -96,6 +106,15 @@ def uploader():
     f = request.files['file']
     f.save(secure_filename(f.filename))
     return 'file uploaded successfully!!..'
+  
+# mail setup  
+# This is just a sample code setup how does mailing works in flask, it will not work
+@app.route('/flask_mail')
+def flask_mail():
+  msg= Message('Test_mail',recipients="krr@yopmal.com",sender="krrish@yopmail.com")
+  msg.body = 'Hello Flask message sent from Flask-Mail'
+  mail.send(msg)
+  return "Mail Sent"
   
 if __name__ == '__main__':
   app.run(debug=True)
