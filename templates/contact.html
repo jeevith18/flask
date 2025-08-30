@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Form</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .contact-card {
+            background: #fff;
+            padding: 2rem 2.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            width: 400px;
+            margin-top: 40px;
+        }
+        .contact-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #4285f4;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .form-group label {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="contact-card">
+        <div class="contact-title">Contact Form</div>
+        {% for message in form.name.errors %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+        {% for message in form.email.errors %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endfor %}
+        <form action="{{ url_for('flask_form') }}" method="post">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.name.label }}
+                {{ form.name(class_='form-control') }}
+            </div>
+            <div class="form-group">
+                {{ form.Gender.label }}<br>
+                {{ form.Gender }}
+            </div>
+            <div class="form-group">
+                {{ form.Address.label }}
+                {{ form.Address(class_='form-control') }}
+            </div>
+            <div class="form-group">
+                {{ form.email.label }}
+                {{ form.email(class_='form-control') }}
+            </div>
+            <div class="form-group">
+                {{ form.Age.label }}
+                {{ form.Age(class_='form-control') }}
+            </div>
+            <div class="form-group">
+                {{ form.language.label }}
+                {{ form.language(class_='form-control') }}
+            </div>
+            <div class="form-group text-center">
+                {{ form.submit(class_='btn btn-primary btn-block') }}
+            </div>
+        </form>
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+</body>
+</html>
