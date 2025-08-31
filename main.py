@@ -2,6 +2,7 @@ from flask import Flask, redirect, url_for, request, render_template, make_respo
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from contactform import ContactForm
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 app.secret_key="my-secret-key-flask"
@@ -11,7 +12,9 @@ app.config['MAIL_USERNAME'] = 'yourId@yopmail.com'
 app.config['MAIL_PASSWORD'] = 'password'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.sqlite3'
 mail=Mail(app)
+db = SQLAlchemy(app)
 
 @app.route('/test_jinja/<name>')
 def test_jinja_template(name):
@@ -128,6 +131,35 @@ def flask_form():
       return render_template('form_success.html')
   elif request.method == 'GET':
     return render_template('contact.html', form = form)
+  
+class student(db.Model):
+  id = db.Column('student_id',db.Integer,primary_key=True)
+  name = db.Column(db.String(100))
+  gender = db.Column(db.String(25))
 
+  def __init__(self,id,name,gender):
+    self.id = id
+    self.name = name
+    self.gender = gender
+    
+@app.route('/show_all')
+def show_all():
+  return render_template('show_all.html',student_all=student.query.all)
+
+@app.route('/new_student', methods=['GET', 'POST'])
+def add_student():
+  if request.method == 'POST':
+    if not request.form['name'] or not request.form["gender"]:
+      flash('Please enter all the fields', 'error')
+    else:
+      new_student = student(None, request.form['name'], request.form['gender'])
+      db.session.add(new_student)
+      db.session.commit()
+      flash('Record was successfully added')
+      return redirect(url_for('show_all'))
+  return render_template('new_student.html')
+    
 if __name__ == '__main__':
+  with app.app_context():
+    db.create_all()
   app.run(debug=True)
