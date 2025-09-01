@@ -167,7 +167,7 @@ def add_student():
       return redirect(url_for('show_all'))
   return render_template('new_student.html')
 
-
+# method to demostrate ajax call, this is called in index.html file using the javascript function
 @app.route('/say_hello', methods=['POST'])
 def say_hello():
     colors = ['red', 'blue', 'green', 'orange', 'purple', 'brown', 'pink', 'yellow', 'gray', 'black']
