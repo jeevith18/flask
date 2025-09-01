@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Modern Flask AJAX Example</title>
+    <style>
+        .msg-bg {
+            background-color: #e0e0e0;
+            padding: 4px 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <h2>Modern Flask AJAX Demo</h2>
+    <button id="hello-btn">Say Hello (AJAX)</button>
+    <div id="result" style="margin-top:20px;"></div>
+    <script>
+        document.getElementById('hello-btn').onclick = function() {
+            fetch('/say_hello', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                var resultDiv = document.getElementById('result');
+                if (data.message) {
+                    resultDiv.innerHTML = `<span class='msg-bg' style='color:${data.color}'>${data.message}</span>`;
+                } else {
+                    resultDiv.innerHTML = '';
+                }
+            });
+        };
+    </script>
+</body>
+</html>
