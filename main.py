@@ -1,8 +1,10 @@
-from flask import Flask, redirect, url_for, request, render_template, make_response, flash
+from flask import Flask, g, redirect, url_for, request, render_template, make_response, flash, jsonify
 from flask_mail import Mail, Message
 from werkzeug.utils import secure_filename
 from contactform import ContactForm
 from flask_sqlalchemy import SQLAlchemy
+import os
+import random
 
 app = Flask(__name__)
 app.secret_key="my-secret-key-flask"
@@ -15,6 +17,8 @@ app.config['MAIL_USE_SSL'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///students.sqlite3'
 mail=Mail(app)
 db = SQLAlchemy(app)
+app.config['SIJAX_STATIC_PATH'] = os.path.join('.', os.path.dirname(__file__), 'static/js/sijax/')
+app.config['SIJAX_JSON_URI'] = '/static/js/sijax/json2.js'
 
 @app.route('/test_jinja/<name>')
 def test_jinja_template(name):
@@ -73,7 +77,11 @@ def result():
 def welcome():
   username = request.cookies.get('username')
   return render_template('home.html', username=username)
-  
+
+@app.route('/ajax-demo')
+def ajax_demo():
+    return render_template('index.html')
+
 @app.route('/setname',methods=['POST','GET'])
 def set_cookie():
   if request.method == 'POST':
@@ -158,7 +166,15 @@ def add_student():
       flash('Record was successfully added')
       return redirect(url_for('show_all'))
   return render_template('new_student.html')
-    
+
+
+@app.route('/say_hello', methods=['POST'])
+def say_hello():
+    colors = ['red', 'blue', 'green', 'orange', 'purple', 'brown', 'pink', 'yellow', 'gray', 'black']
+    color = random.choice(colors)
+    message = f"Hello from Flask modern AJAX! (Color: {color})"
+    return jsonify(message=message, color=color)
+
 if __name__ == '__main__':
   with app.app_context():
     db.create_all()
