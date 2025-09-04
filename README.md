@@ -1,3 +1,4 @@
+This is a sample app, i built for my learning
 # Flask Student Management App
 
 A modular Flask web application for student management, featuring:
